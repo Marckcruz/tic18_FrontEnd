@@ -7,13 +7,11 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: lightcyan;
         }
 
         #listaTarefas {
             list-style-type: none;
             padding: 0;
-            
         }
 
         .tarefa {
@@ -22,11 +20,8 @@
             justify-content: space-between;
             align-items: center;
             padding: 5px;
-            border: px solid #3a08ee;
+            border: 1px solid #ccc;
             border-radius: 3px;
-            background-color: rgb(204, 204, 198);
-            
-            
         }
 
         .tarefa button {
@@ -40,40 +35,41 @@
     <h2>Gerenciador de Tarefas</h2>
 
     <form id="formularioTarefa">
-        <label style="color:#3811e7" for="tarefa">Tarefa:</label>
+        <label for="tarefa">Tarefa:</label>
         <input type="text" id="tarefa" required>
-        <button style="color:#3811e7" type="button" onclick="adicionarTarefa()">Adicionar Tarefa</button>
+        <button type="button" onclick="adicionarTarefa()">Adicionar Tarefa</button>
     </form>
 
     <ul id="listaTarefas"></ul>
 
     <script>
-        
+        // Classe Tarefa
         class Tarefa {
             constructor(nome) {
                 this.nome = nome;
             }
         }
 
-        
+        // Adiciona tarefa no DOM
         function adicionaTarefaDOM(tarefa) {
             const listaTarefas = document.getElementById('listaTarefas');
             const novaTarefa = document.createElement('li');
             novaTarefa.className = 'tarefa';
             novaTarefa.innerHTML = `
                 <span>${tarefa.nome}</span>
-                <button onclick="removerTarefa(this)">Remover</button>`;
+                <button onclick="removerTarefa(this)">Remover</button>
+            `;
             listaTarefas.appendChild(novaTarefa);
         }
 
-        
+        // Adiciona tarefa no localStorage
         function adicionaTarefaNoStorage(tarefa) {
             let tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
             tarefas.push(tarefa);
             localStorage.setItem('tarefas', JSON.stringify(tarefas));
         }
 
-        
+        // Função para adicionar uma nova tarefa
         function adicionarTarefa() {
             const campoTarefa = document.getElementById('tarefa');
             const nomeTarefa = campoTarefa.value.trim();
@@ -86,21 +82,21 @@
             }
         }
 
-        
+        // Função para remover uma tarefa
         function removerTarefa(botaoRemover) {
             const tarefa = botaoRemover.parentElement;
             const nomeTarefa = tarefa.querySelector('span').innerText;
 
-            
+            // Remover do DOM
             tarefa.remove();
 
-            
+            // Remover do localStorage
             let tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
             tarefas = tarefas.filter(t => t.nome !== nomeTarefa);
             localStorage.setItem('tarefas', JSON.stringify(tarefas));
         }
 
-        
+        // Carregar tarefas do localStorage ao carregar a página
         window.onload = function () {
             const tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
             tarefas.forEach(tarefa => adicionaTarefaDOM(tarefa));
