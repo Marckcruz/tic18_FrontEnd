@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: lightcyan;
+        }
+
+        #listaTarefas {
+            list-style-type: none;
+            padding: 0;
+            
+        }
+
+        .tarefa {
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px;
+            border: px solid #3a08ee;
+            border-radius: 3px;
+            background-color: rgb(204, 204, 198);
+            
+            
+        }
+
+        .tarefa button {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Gerenciador de Tarefas</h2>
+
+    <form id="formularioTarefa">
+        <label style="color:#3811e7" for="tarefa">Tarefa:</label>
+        <input type="text" id="tarefa" required>
+        <button style="color:#3811e7" type="button" onclick="adicionarTarefa()">Adicionar Tarefa</button>
+    </form>
+
+    <ul id="listaTarefas"></ul>
+
+    <script>
+        
+        class Tarefa {
+            constructor(nome) {
+                this.nome = nome;
+            }
+        }
+
+        
+        function adicionaTarefaDOM(tarefa) {
+            const listaTarefas = document.getElementById('listaTarefas');
+            const novaTarefa = document.createElement('li');
+            novaTarefa.className = 'tarefa';
+            novaTarefa.innerHTML = `
+                <span>${tarefa.nome}</span>
+                <button onclick="removerTarefa(this)">Remover</button>`;
+            listaTarefas.appendChild(novaTarefa);
+        }
+
+        
+        function adicionaTarefaNoStorage(tarefa) {
+            let tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+            tarefas.push(tarefa);
+            localStorage.setItem('tarefas', JSON.stringify(tarefas));
+        }
+
+        
+        function adicionarTarefa() {
+            const campoTarefa = document.getElementById('tarefa');
+            const nomeTarefa = campoTarefa.value.trim();
+
+            if (nomeTarefa !== '') {
+                const novaTarefa = new Tarefa(nomeTarefa);
+                adicionaTarefaDOM(novaTarefa);
+                adicionaTarefaNoStorage(novaTarefa);
+                campoTarefa.value = '';
+            }
+        }
+
+        
+        function removerTarefa(botaoRemover) {
+            const tarefa = botaoRemover.parentElement;
+            const nomeTarefa = tarefa.querySelector('span').innerText;
+
+            
+            tarefa.remove();
+
+            
+            let tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+            tarefas = tarefas.filter(t => t.nome !== nomeTarefa);
+            localStorage.setItem('tarefas', JSON.stringify(tarefas));
+        }
+
+        
+        window.onload = function () {
+            const tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+            tarefas.forEach(tarefa => adicionaTarefaDOM(tarefa));
+        };
+    </script>
+
+</body>
+</html>
